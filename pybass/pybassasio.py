@@ -189,10 +189,10 @@ BASS_ASIO_ChannelGetVolume = func_type(ctypes.c_float, ctypes.c_byte, ctypes.c_i
 BASS_ASIO_ChannelGetLevel = func_type(ctypes.c_float, ctypes.c_byte, ctypes.c_ulong)(('BASS_ASIO_ChannelGetLevel', bassasio_module))
 
 if __name__ == "__main__":
-	print('BASSASIO implemented Version %X' % BASSASIOVERSION)
-	print('BASSASIO real Version %X' % BASS_ASIO_GetVersion())
+	print(('BASSASIO implemented Version %X' % BASSASIOVERSION))
+	print(('BASSASIO real Version %X' % BASS_ASIO_GetVersion()))
 	if not BASS_ASIO_Init(0):
-		print('BASS_ASIO_Init error %s' % get_error_description(BASS_ASIO_ErrorGetCode()))
+		print(('BASS_ASIO_Init error %s' % get_error_description(BASS_ASIO_ErrorGetCode())))
 	else:
 		if not BASS_ASIO_Free():
-			print('BASS_ASIO_Free error %s' % get_error_description(BASS_ASIO_ErrorGetCode()))
+			print(('BASS_ASIO_Free error %s' % get_error_description(BASS_ASIO_ErrorGetCode())))

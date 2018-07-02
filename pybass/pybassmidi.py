@@ -204,19 +204,19 @@ BASS_MIDI_FontGetVolume = func_type(ctypes.c_float, HSOUNDFONT)(('BASS_MIDI_Font
 
 if __name__ == "__main__":
 	if not pybass.BASS_Init(-1, 44100, 0, 0, 0):
-		print('BASS_Init error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+		print(('BASS_Init error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))
 	else:
 		font = BASS_MIDI_FontInit(b'CT4MGM.SF2', 0)
 		if font == 0:
-			print('BASS_MIDI_FontInit error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+			print(('BASS_MIDI_FontInit error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))
 		else:
 			font_info = BASS_MIDI_FONTINFO()
 			if BASS_MIDI_FontGetInfo(font, font_info):
 				print('============== SOUNDFONT Information ==============')
-				print("name: %s\nloaded: %d / %d" % (font_info.name, font_info.samload, font_info.samsize))
+				print(("name: %s\nloaded: %d / %d" % (font_info.name, font_info.samload, font_info.samsize)))
 			handle = BASS_MIDI_StreamCreateFile(False, b'test.mid', 0, 0, 0, 44100)
 			pybass.play_handle(handle, False)
 			if BASS_MIDI_FontFree(font):
-				print('BASS_MIDI_FontFree error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+				print(('BASS_MIDI_FontFree error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))
 		if not pybass.BASS_Free():
-			print('BASS_Free error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+			print(('BASS_Free error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))

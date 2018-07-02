@@ -5,7 +5,7 @@
 from pybass import *
 
 def main():
-	file_name = u'test_русский.ogg'
+	file_name = 'test_русский.ogg'
 	if sys.hexversion >= 0x03000000:
 		file_name = 'test_русский.ogg'
 	BASS_Init(-1, 44100, 0, 0, 0)

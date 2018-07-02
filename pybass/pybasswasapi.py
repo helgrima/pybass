@@ -155,11 +155,11 @@ BASS_WASAPI_GetLevel = func_type(HSTREAM)(('BASS_WASAPI_GetLevel', basswasapi_mo
 
 if __name__ == "__main__":
         WasapiProc = WASAPIPROC()
-        print('BASSWASAPI real Version %X' % BASS_WASAPI_GetVersion())
+        print(('BASSWASAPI real Version %X' % BASS_WASAPI_GetVersion()))
         if not BASS_WASAPI_Init(-1,48000,2,BASS_WASAPI_AUTOFORMAT|BASS_WASAPI_EXCLUSIVE,0.015,0.005,WasapiProc,None):
                 print('failed, try shared mode')
                 if not BASS_WASAPI_Init(-1,48000,2,BASS_WASAPI_AUTOFORMAT,0.015,0.005,WasapiProc,None):
-                        print('BASS_WASAPI error %s') % get_error_description(BASS_ErrorGetCode())
+                        print(('BASS_WASAPI error %s') % get_error_description(BASS_ErrorGetCode()))
                         
         
         #BASS_WASAPI_GetInfo(BASS_WASAPI_INFO)

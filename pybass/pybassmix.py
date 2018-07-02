@@ -117,4 +117,4 @@ BASS_Split_StreamReset = func_type(ctypes.c_byte, ctypes.c_ulong)(('BASS_Split_S
 
 
 if __name__ == "__main__":
-	print('BASS Mixer Version %X' % BASS_Mixer_GetVersion())
+	print(('BASS Mixer Version %X' % BASS_Mixer_GetVersion()))

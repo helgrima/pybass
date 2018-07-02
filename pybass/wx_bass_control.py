@@ -4,12 +4,12 @@
 
 import sys
 
-import pybass
+from . import pybass
 try:
-	import pybassmidi
+	from . import pybassmidi
 except:
 	pybassmidi = None
-from cStringIO import StringIO
+from io import StringIO
 
 try:
 	from exe import wx
@@ -19,7 +19,7 @@ from wx.lib.ticker import Ticker
 
 def print_error():
 	exc, err, traceback = sys.exc_info()
-	print exc, traceback.tb_frame.f_code.co_filename, 'ERROR ON LINE', traceback.tb_lineno, '\n', err
+	print(exc, traceback.tb_frame.f_code.co_filename, 'ERROR ON LINE', traceback.tb_lineno, '\n', err)
 	del exc, err, traceback
 
 class memory_stream:
@@ -136,7 +136,7 @@ class player_ctrl(wx.Panel):
 				self.slider.Enable(False)
 				self.btn_play.Enable(False)
 				self.btn_stop.Enable(False)
-				print 'BASS_Init error', pybass.get_error_description(bass_error_code)
+				print('BASS_Init error', pybass.get_error_description(bass_error_code))
 		self.plugins = {}
 		self.plugins['aac'] = (pybass.BASS_PluginLoad('bass_aac.dll', 0), '|AAC|*.aac')
 		self.plugins['ac3'] = (pybass.BASS_PluginLoad('bass_ac3.dll', 0), '|AC3|*.ac3')
@@ -154,11 +154,11 @@ class player_ctrl(wx.Panel):
 			sound_font_file_name = 'CT4MGM.SF2'
 			self.sound_font = pybassmidi.BASS_MIDI_FontInit(sound_font_file_name, 0)
 			if self.sound_font == 0:
-				print 'BASS_MIDI_FontInit error', pybass.get_error_description(pybass.BASS_ErrorGetCode()), ' (sound font file must be', sound_font_file_name, ')'
+				print('BASS_MIDI_FontInit error', pybass.get_error_description(pybass.BASS_ErrorGetCode()), ' (sound font file must be', sound_font_file_name, ')')
 			else:
 				self.plugins['midi'] = (pybass.BASS_PluginLoad('bassmidi.dll', 0), '|MID|*.mid')
 		else:
-			print 'pybassmidi module not accessible'
+			print('pybassmidi module not accessible')
 
 		self.volume_slider = wx.Slider(self, wx.ID_ANY, pybass.BASS_GetVolume() * 100, 0, 100)
 		self.Bind(wx.EVT_SCROLL, self.event_volume_slider, self.volume_slider)
@@ -170,7 +170,7 @@ class player_ctrl(wx.Panel):
 		import os
 		wildcard = 'music sounds (MO3, IT, XM, S3M, MTM, MOD, UMX)|*.mo3;*.it;*.xm;*.s3m;*.mtm;*.mod;*.umx'
 		wildcard += '|stream sounds (MP3, MP2, MP1, OGG, WAV, AIFF)|*.mp3;*.mp2;*.mp1;*.ogg;*.wav;*.aiff'
-		for plugin in self.plugins.itervalues():
+		for plugin in self.plugins.values():
 			if plugin[0] > 0:
 				wildcard += plugin[1]
 		wildcard += '|All files (*.*)|*.*'
@@ -179,7 +179,7 @@ class player_ctrl(wx.Panel):
 			self.name_stream = file_name = dlg.GetPath()
 			if os.path.isfile(file_name):
 				flags = 0
-				if isinstance(file_name, unicode):
+				if isinstance(file_name, str):
 					flags |= pybass.BASS_UNICODE
 					try:
 						pybass.BASS_CHANNELINFO._fields_.remove(('filename', pybass.ctypes.c_char_p))
@@ -196,7 +196,7 @@ class player_ctrl(wx.Panel):
 				else:#other sound types
 					new_bass_handle = pybass.BASS_StreamCreateFile(False, file_name, 0, 0, flags)
 				if new_bass_handle == 0:
-					print error_msg, pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print(error_msg, pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.method_stop_audio()
 					self.bass_handle = new_bass_handle
@@ -212,7 +212,7 @@ class player_ctrl(wx.Panel):
 			self.name_stream = file_name = dlg.GetPath()
 			if os.path.isfile(file_name):
 				flags = 0
-				if isinstance(file_name, unicode):
+				if isinstance(file_name, str):
 					flags |= pybass.BASS_UNICODE
 					try:
 						pybass.BASS_CHANNELINFO._fields_.remove(('filename', pybass.ctypes.c_char_p))
@@ -234,7 +234,7 @@ class player_ctrl(wx.Panel):
 				self.stream = memory_stream(open(file_name, 'rb').read(), file_name)
 				new_bass_handle = pybass.BASS_StreamCreate(44100, 2, flags, self.user_func, 0)
 				if new_bass_handle == 0:
-					print 'BASS_StreamCreate error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_StreamCreate error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.method_stop_audio()
 					self.bass_handle = new_bass_handle
@@ -275,13 +275,13 @@ class player_ctrl(wx.Panel):
 				self.bass_file_procs.seek = pybass.FILESEEKPROC(self.callback_seek)
 				new_bass_handle = pybass.BASS_StreamCreateFileUser(system, flags, self.bass_file_procs, id(self.stream.data))
 				if new_bass_handle == 0:
-					print 'BASS_StreamCreateFileUser error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_StreamCreateFileUser error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.method_stop_audio()
 					self.bass_handle = new_bass_handle
 					channel_info = self.method_get_channel_info()
 					if channel_info.ctype == pybass.BASS_CTYPE_STREAM_OGG:
-						import pyogginfo
+						from . import pyogginfo
 						ogg_info = pyogginfo.VorbisStreamInfo()
 						stream = pyogginfo.SimpleDemultiplexer(ogg_info)
 						if isinstance(self.stream.data, str):
@@ -303,7 +303,7 @@ class player_ctrl(wx.Panel):
 	def method_get_channel_info(self):
 		channel_info = pybass.BASS_CHANNELINFO()
 		if not pybass.BASS_ChannelGetInfo(self.bass_handle, channel_info):
-			print 'BASS_ChannelGetInfo error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+			print('BASS_ChannelGetInfo error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 		return channel_info
 
 	def method_get_state(self):
@@ -320,7 +320,7 @@ class player_ctrl(wx.Panel):
 
 	def method_set_position(self, value):
 		if not pybass.BASS_ChannelSetPosition(self.bass_handle, value, pybass.BASS_POS_BYTE):
-			print 'BASS_ChannelSetPosition error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+			print('BASS_ChannelSetPosition error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 
 	def method_slider_set_range(self):
 		self.slider.SetRange(0, self.method_get_length())
@@ -358,14 +358,14 @@ class player_ctrl(wx.Panel):
 		if self.bass_handle:
 			if self.method_get_state() in (pybass.BASS_ACTIVE_STOPPED, pybass.BASS_ACTIVE_PAUSED):
 				if not pybass.BASS_ChannelPlay(self.bass_handle, False):
-					print 'BASS_ChannelPlay error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_ChannelPlay error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.slider.timer_start()
 					self.btn_play.SetLabel(_('Pause'))
 					self.btn_stop.Enable(True)
 			else:
 				if not pybass.BASS_ChannelPause(self.bass_handle):
-					print 'BASS_ChannelPause error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_ChannelPause error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.slider.timer_stop()
 					self.btn_play.SetLabel(_('Unpause'))
@@ -392,7 +392,7 @@ class player_ctrl(wx.Panel):
 		self.slider.timer_stop()
 		if self.bass_handle:
 			if not pybass.BASS_ChannelStop(self.bass_handle):
-				print 'BASS_ChannelStop error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+				print('BASS_ChannelStop error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 			else:
 				self.method_set_position(0)
 
@@ -401,12 +401,12 @@ class player_ctrl(wx.Panel):
 			channel_info = self.method_get_channel_info()
 			if channel_info.ctype >= pybass.BASS_CTYPE_MUSIC_MOD:
 				if not pybass.BASS_MusicFree(self.bass_handle):
-					print 'BASS_MusicFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_MusicFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.bass_handle = 0
 			elif channel_info.ctype >= pybass.BASS_CTYPE_STREAM:
 				if not pybass.BASS_StreamFree(self.bass_handle):
-					print 'BASS_StreamFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_StreamFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 				else:
 					self.bass_handle = 0
 
@@ -419,11 +419,11 @@ class player_ctrl(wx.Panel):
 		self.method_free_handle()
 		if self.sound_font != 0 and pybassmidi:
 			if pybassmidi.BASS_MIDI_FontFree(self.sound_font):
-				print 'BASS_MIDI_FontFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
-		for plugin in self.plugins.itervalues():
+				print('BASS_MIDI_FontFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+		for plugin in self.plugins.values():
 			if plugin[0] > 0:
 				if pybass.BASS_PluginFree(plugin[0]):
-					print 'BASS_PluginFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode())
+					print('BASS_PluginFree error', pybass.get_error_description(pybass.BASS_ErrorGetCode()))
 
 
 if __name__ == "__main__":
@@ -454,7 +454,7 @@ if __name__ == "__main__":
 			self.__write__(content)
 		def writelines(self, l):
 			self.show_control()
-			map(self.__write__, l)
+			list(map(self.__write__, l))
 		def flush(self):
 			self.SaveFile(self.file_name)
 
@@ -523,12 +523,12 @@ if __name__ == "__main__":
 						i += 1
 				if len(list_trans) > 0:
 					try:
-						list_trans[current_trans].install(unicode = wx.USE_UNICODE)
+						list_trans[current_trans].install(str = wx.USE_UNICODE)
 					except:
-						print print_error()
+						print(print_error())
 			if current_trans == -1:
 				trans = gettext.NullTranslations()
-				trans.install(unicode = wx.USE_UNICODE)
+				trans.install(str = wx.USE_UNICODE)
 			# SETUP WX LANGUAGE TRANSLATION TO OS DEFAULT LANGUAGE
 			# WX DIRECTORY MUST BE TO CONTAIN LANG DIRECTORY
 			self.locale = wx.Locale(wx.LANGUAGE_DEFAULT)

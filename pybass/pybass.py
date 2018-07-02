@@ -1192,19 +1192,19 @@ def get_tags_as_dict(handle, tags = BASS_TAG_OGG):
 
 def play_handle(handle, show_tags = True):
 	if handle == 0:
-		print('BASS_StreamCreateFile error %s' % get_error_description(BASS_ErrorGetCode()))
+		print(('BASS_StreamCreateFile error %s' % get_error_description(BASS_ErrorGetCode())))
 	else:
 		if show_tags:
 			print('============== Tags Information ==============')
 			try:
-				import pytags
-				print(pytags.TAGS_Read(handle, '%IFV1(%ITRM(%TRCK),%ITRM(%TRCK). )%IFV2(%ITRM(%ARTI),%ICAP(%ITRM(%ARTI)),no artist) - %IFV2(%ITRM(%TITL),%ICAP(%ITRM(%TITL)),no title)%IFV1(%ITRM(%ALBM), - %IUPC(%ITRM(%ALBM)))%IFV1(%YEAR, %(%YEAR%))%IFV1(%ITRM(%GNRE), {%ITRM(%GNRE)})%IFV1(%ITRM(%CMNT), [%ITRM(%CMNT)])'))
+				from . import pytags
+				print((pytags.TAGS_Read(handle, '%IFV1(%ITRM(%TRCK),%ITRM(%TRCK). )%IFV2(%ITRM(%ARTI),%ICAP(%ITRM(%ARTI)),no artist) - %IFV2(%ITRM(%TITL),%ICAP(%ITRM(%TITL)),no title)%IFV1(%ITRM(%ALBM), - %IUPC(%ITRM(%ALBM)))%IFV1(%YEAR, %(%YEAR%))%IFV1(%ITRM(%GNRE), {%ITRM(%GNRE)})%IFV1(%ITRM(%CMNT), [%ITRM(%CMNT)])')))
 			except:
 				print('============== tags module not accessible ==============')
 				print('============== BASS_ChannelGetTags return ==============')
 				try:
 					for tag in get_tags(handle):
-						print(string_for_print(tag))
+						print((string_for_print(tag)))
 				except:
 					print('error with get_tags(handle) function')
 				#~ for key, value in get_tags_as_list(handle):
@@ -1217,75 +1217,75 @@ def play_handle(handle, show_tags = True):
 		print('============== Channel Information ==============')
 		channel_info = BASS_CHANNELINFO()
 		if not BASS_ChannelGetInfo(handle, channel_info):
-			print('BASS_ChannelGetInfo error %s' % get_error_description(BASS_ErrorGetCode()))
+			print(('BASS_ChannelGetInfo error %s' % get_error_description(BASS_ErrorGetCode())))
 		else:
-			print('default playback rate = %d' % channel_info.freq)
-			print('channels = %d' % channel_info.chans)
-			print('BASS_SAMPLE/STREAM/MUSIC/SPEAKER flags = %d' % channel_info.flags)
-			print('type of channel = %X' % channel_info.ctype)
-			print('original resolution = %d' % channel_info.origres)
-			print('plugin = %d' % channel_info.plugin)
-			print('sample = %d' % channel_info.sample)
-			print('filename = %s' % channel_info.filename)
+			print(('default playback rate = %d' % channel_info.freq))
+			print(('channels = %d' % channel_info.chans))
+			print(('BASS_SAMPLE/STREAM/MUSIC/SPEAKER flags = %d' % channel_info.flags))
+			print(('type of channel = %X' % channel_info.ctype))
+			print(('original resolution = %d' % channel_info.origres))
+			print(('plugin = %d' % channel_info.plugin))
+			print(('sample = %d' % channel_info.sample))
+			print(('filename = %s' % channel_info.filename))
 		print('============== Ext Channel Information ==============')
 		channel_length = BASS_ChannelGetLength(handle, BASS_POS_BYTE)
 		channel_position = BASS_ChannelGetPosition(handle, BASS_POS_BYTE)
-		print('Channel Length = %d' % channel_length)
-		print('Channel Length = %d' % int(BASS_ChannelBytes2Seconds(handle, channel_length)), 'seconds')
+		print(('Channel Length = %d' % channel_length))
+		print(('Channel Length = %d' % int(BASS_ChannelBytes2Seconds(handle, channel_length)), 'seconds'))
 		if not BASS_ChannelPlay(handle, False):
-			print('BASS_ChannelPlay error %s' % get_error_description(BASS_ErrorGetCode()))
+			print(('BASS_ChannelPlay error %s' % get_error_description(BASS_ErrorGetCode())))
 		else:
 			print('============== Play Information ==============')
 			import time
 			while channel_position < channel_length:
 				channel_position = BASS_ChannelGetPosition(handle, BASS_POS_BYTE)
-				print('Channel Position = %d' % channel_position)
-				print('Channel Position = %d' % int(BASS_ChannelBytes2Seconds(handle, channel_position)), 'seconds')
-				print('CPU =', BASS_GetCPU())
+				print(('Channel Position = %d' % channel_position))
+				print(('Channel Position = %d' % int(BASS_ChannelBytes2Seconds(handle, channel_position)), 'seconds'))
+				print(('CPU =', BASS_GetCPU()))
 				time.sleep(1)
 		if not BASS_StreamFree(handle):
-			print('BASS_StreamFree error %s' % get_error_description(BASS_ErrorGetCode()))
+			print(('BASS_StreamFree error %s' % get_error_description(BASS_ErrorGetCode())))
 
 @SYNCPROC
 def callback(handle, buffer, length, user):
     print("end.")
 
 if __name__ == "__main__":
-    print('BASS implemented Version %s' % BASSVERSIONTEXT)
-    print('BASS real Version %X' % BASS_GetVersion())
+    print(('BASS implemented Version %s' % BASSVERSIONTEXT))
+    print(('BASS real Version %X' % BASS_GetVersion()))
     if not BASS_Init(-1, 44100, 0, 0, 0):
-        print('BASS_Init error %s' % get_error_description(BASS_ErrorGetCode()))
+        print(('BASS_Init error %s' % get_error_description(BASS_ErrorGetCode())))
     else:
         print('============== BASS Information ==============')
         bi = BASS_INFO()
         if not BASS_GetInfo(bi):
-            print('BASS_GetInfo error %s' % get_error_description(BASS_ErrorGetCode()))
+            print(('BASS_GetInfo error %s' % get_error_description(BASS_ErrorGetCode())))
         else:
-            print('device capabilities (DSCAPS_xxx flags) = %d' % bi.flags)
-            print('size of total device hardware memory = %d' % bi.hwsize)
-            print('number of free sample slots in the hardware = %d' % bi.freesam)
-            print('number of free 3D sample slots in the hardware = %d' % bi.free3d)
-            print('min sample rate supported by the hardware = %d' % bi.minrate)
-            print('max sample rate supported by the hardware = %d' % bi.maxrate)
-            print('device supports EAX? (always FALSE if BASS_DEVICE_3D was not used) = %d' % bool(bi.eax))
-            print('recommended minimum buffer length in ms (requires BASS_DEVICE_LATENCY) = %d' % bi.minbuf)
-            print('DirectSound version = %d' % bi.dsver)
-            print('delay (in ms) before start of playback (requires BASS_DEVICE_LATENCY) = %d' % bi.latency)
-            print('BASS_Init "flags" parameter = %d' % bi.initflags)
-            print('number of speakers available = %d' % bi.speakers)
-            print('current output rate (Vista/OSX only) = %d' % bi.freq)
+            print(('device capabilities (DSCAPS_xxx flags) = %d' % bi.flags))
+            print(('size of total device hardware memory = %d' % bi.hwsize))
+            print(('number of free sample slots in the hardware = %d' % bi.freesam))
+            print(('number of free 3D sample slots in the hardware = %d' % bi.free3d))
+            print(('min sample rate supported by the hardware = %d' % bi.minrate))
+            print(('max sample rate supported by the hardware = %d' % bi.maxrate))
+            print(('device supports EAX? (always FALSE if BASS_DEVICE_3D was not used) = %d' % bool(bi.eax)))
+            print(('recommended minimum buffer length in ms (requires BASS_DEVICE_LATENCY) = %d' % bi.minbuf))
+            print(('DirectSound version = %d' % bi.dsver))
+            print(('delay (in ms) before start of playback (requires BASS_DEVICE_LATENCY) = %d' % bi.latency))
+            print(('BASS_Init "flags" parameter = %d' % bi.initflags))
+            print(('number of speakers available = %d' % bi.speakers))
+            print(('current output rate (Vista/OSX only) = %d' % bi.freq))
         print('============== volume ==============')
-        print('volume = %d' % BASS_GetVolume())
+        print(('volume = %d' % BASS_GetVolume()))
         print('============== Device Information ==============')
         bd = BASS_DEVICEINFO()
         if not BASS_GetDeviceInfo(BASS_GetDevice(), bd):
-            print('BASS_GetDeviceInfo error %s' % get_error_description(BASS_ErrorGetCode()))
+            print(('BASS_GetDeviceInfo error %s' % get_error_description(BASS_ErrorGetCode())))
         else:
-            print('description = %s' % bd.name)
-            print('driver = %s' % bd.driver)
-            print('flags = %s' % bd.flags)
+            print(('description = %s' % bd.name))
+            print(('driver = %s' % bd.driver))
+            print(('flags = %s' % bd.flags))
         handle = BASS_StreamCreateFile(False, b'test.wav', 0, 0, 0)
         BASS_ChannelSetSync(handle, BASS_SYNC_END, 0, callback, 0)
         play_handle(handle, False)
         if not BASS_Free():
-            print('BASS_Free error %s' % get_error_description(BASS_ErrorGetCode()))
+            print(('BASS_Free error %s' % get_error_description(BASS_ErrorGetCode())))

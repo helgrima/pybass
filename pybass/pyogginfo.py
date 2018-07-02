@@ -100,7 +100,7 @@ def split_segments(data, segs):
 	stop = 0
 	map_segs = segs
 	if hexversion < 0x03000000:
-		map_segs = map(ord, segs)
+		map_segs = list(map(ord, segs))
 	for length in map_segs:
 		if length:
 			stop += length
@@ -146,7 +146,7 @@ class OggPage(object):
 		header = struct.pack("<4sBBqLL", b'OggS', self.version, self.headerType, self.granulePosition, self.streamID, self.sequenceNumber)
 		def _(s):
 			return _chr(len(s))
-		body = b''.join( [ _chr(len(self.segments)) ] + map(_, self.segments) + self.segments )
+		body = b''.join( [ _chr(len(self.segments)) ] + list(map(_, self.segments)) + self.segments )
 		return b''.join([ header, struct.pack("<L", checksum(header, body)), body ])
 	def __repr__(self):
 		return '<OggPage version=%r headerType=%r streamID=%r granulePosition=%r sequenceNumber=%r continued=%r segments=%r payload=%r>'%(self.version, self.headerType, self.streamID, self.granulePosition, self.sequenceNumber, self.continued, len(self.segments), self.payload())
@@ -438,21 +438,21 @@ if __name__ == "__main__":
 	info = VorbisStreamInfo()
 	stream = SimpleDemultiplexer(info)
 	stream.process(open('test.ogg', 'rb').read())
-	print('size            : %d' % info.payload)
-	print('overhead        : %d' % info.overhead)
-	print('pages           : %d' % info.pageCount)
-	print('audio packets   : %d' % info.audioPackets)
-	print('audio length    : %d' % info.audioPacketLength)
-	print('vendor          : %s' % info.comments.vendor)
-	print('comment entries : %d' % len(info.comments.comments))
+	print(('size            : %d' % info.payload))
+	print(('overhead        : %d' % info.overhead))
+	print(('pages           : %d' % info.pageCount))
+	print(('audio packets   : %d' % info.audioPackets))
+	print(('audio length    : %d' % info.audioPacketLength))
+	print(('vendor          : %s' % info.comments.vendor))
+	print(('comment entries : %d' % len(info.comments.comments)))
 	for key, value in info.comments.comments:
 		if hexversion < 0x03000000:
-			print('- %s: %s' % (key, value.encode(CHAR_CODEC)))
+			print(('- %s: %s' % (key, value.encode(CHAR_CODEC))))
 		else:
-			print('- %s: %s' % (key, value))
-	print('sample rate     : %d' % info.identification.sampleRate)
-	print('audio channels  : %d' % info.identification.audioChannels)
-	print('nominal bitrate : %d' % info.identification.nominalBitrate)
-	print('first frame     : %fs' % info.start)
+			print(('- %s: %s' % (key, value)))
+	print(('sample rate     : %d' % info.identification.sampleRate))
+	print(('audio channels  : %d' % info.identification.audioChannels))
+	print(('nominal bitrate : %d' % info.identification.nominalBitrate))
+	print(('first frame     : %fs' % info.start))
 	import datetime
-	print('duration        : %s' % datetime.timedelta(seconds=info.stop-info.start))
+	print(('duration        : %s' % datetime.timedelta(seconds=info.stop-info.start)))

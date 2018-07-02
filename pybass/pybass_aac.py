@@ -53,9 +53,9 @@ BASS_MP4_StreamCreateFileUser = func_type(HSTREAM, ctypes.c_ulong, ctypes.c_ulon
 
 if __name__ == "__main__":
 	if not pybass.BASS_Init(-1, 44100, 0, 0, 0):
-		print('BASS_Init error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+		print(('BASS_Init error %s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))
 	else:
 		handle = BASS_AAC_StreamCreateFile(False, b'test.aac', 0, 0, 0)
 		pybass.play_handle(handle)
 		if not pybass.BASS_Free():
-			print('BASS_Free error%s' % pybass.get_error_description(pybass.BASS_ErrorGetCode()))
+			print(('BASS_Free error%s' % pybass.get_error_description(pybass.BASS_ErrorGetCode())))
